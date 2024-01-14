@@ -16,6 +16,12 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+_
+internal/
+template/
+explorer-ui/
+server/
+ui/
 
 # Go workspace file
 go.work
