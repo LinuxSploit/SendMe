@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Our Server</title>
+    <!-- Include the Tailwind CSS stylesheet -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <!-- Include Font Awesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Custom CSS for dark and light theme -->
+    <style>
+        /* Common styles for both themes */
+        body {
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Dark theme */
+        body.dark-theme {
+            background-color: #1a202c;
+            color: #ffffff;
+        }
+
+        body.dark-theme .bg-white {
+            background-color: #2d3748;
+            color: #ffffff;
+        }
+
+        /* Light theme (default) */
+        body.light-theme {
+            background-color: #ffffff;
+            color: #2d3748;
+        }
+
+        body.light-theme .bg-white {
+            background-color: #ffffff;
+            color: #2d3748;
+        }
+
+        /* Toggle button styles */
+        #toggleButton {
+            cursor: pointer;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            transition: background-color 0.3s, color 0.3s;
+            display: flex;
+            align-items: center;
+        }
+
+        #toggleButton.dark-mode {
+            background-color: #4a5568;
+            color: #ffffff;
+        }
+
+        #toggleButton.light-mode {
+            background-color: #cbd5e0;
+            color: #2d3748;
+        }
+
+        #toggleButton .icon {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body class="font-sans dark-theme">
+
+    <!-- Welcome Screen Section -->
+    <div class="flex items-center justify-center h-screen">
+        <div class="bg-white p-8 rounded shadow-md">
+            <h1 class="text-2xl font-semibold mb-4">Welcome to Our Server</h1>
+            <p class="text-gray-100 mb-6">To access shared files, please enter your username:</p>
+
+            <!-- Username Form -->
+            <form id="usernameForm" class="mb-4" onsubmit="submitForm(event)">
+                <!-- Input Row -->
+                <div class="flex mb-4">
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Enter your username"
+                        class="border border-gray-300 text-black rounded px-4 py-2 flex-1 mr-2"
+                        required
+                    />
+                </div>
+
+                <!-- Button Row -->
+                <div class="flex">
+                    <button type="submit" class="bg-blue-500 text-white rounded px-4 py-2">Submit</button>
+                </div>
+            </form>
+
+            <!-- Theme Toggle Button -->
+            <div class="flex justify-end">
+                <button id="toggleButton" onclick="toggleTheme()" class="text-sm px-2 py-1 rounded focus:outline-none">
+                    <span class="icon">
+                        <i class="fas fa-sun text-yellow-500 dark-mode"></i>
+                        <i class="fas fa-moon text-gray-500 light-mode"></i>
+                    </span>
+                    Toggle Theme
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for form submission and theme toggle -->
+    <script>
+        
+        function submitForm(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+
+            // You can send the username to the server using an HTTP request
+            // For simplicity, let's use the Fetch API for the AJAX request
+            fetch('/api/login', {
+                method: 'POST', // or 'GET' depending on your API handler
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `username=${encodeURIComponent(username)}`,
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                // You can handle the successful response here
+                console.log('Login successful!');
+                // You can redirect the user or perform other actions as needed
+                window.location.href = '/home';
+            })
+            .catch(error => {
+                // Handle errors here
+                console.error('Error:', error);
+            });
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            body.classList.toggle('dark-theme');
+            body.classList.toggle('light-theme');
+            const toggleButton = document.getElementById('toggleButton');
+            toggleButton.classList.toggle('dark-mode');
+            toggleButton.classList.toggle('light-mode');
+        }
+    </script>
+</body>
+</html>

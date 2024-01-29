@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your WebShare App</title>
+    <!-- Include the Tailwind CSS stylesheet -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <!-- Include Font Awesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Common styles for both themes */
+        body {
+            transition: background-color 0.3s, color 0.3s;
+        }
+    
+        /* Dark theme */
+        body.dark-theme {
+            background-color: #1a202c;
+            color: #ffffff;
+        }
+    
+        body.dark-theme .bg-white {
+            background-color: #2d3748;
+            color: #ffffff;
+        }
+    
+        #filesContainerDiv.dark-theme {
+            background-color: #2d3748;
+            color: #ffffff;
+        }
+    
+        /* Light theme (default) */
+        body.light-theme {
+            background-color: #1d51fc;
+            color: #ffffff;
+        }
+    
+        body.light-theme .bg-white {
+            background-color: #ffffff;
+            color: #2d3748;
+        }
+    
+        #filesContainerDiv.light-theme {
+            background-color: #ffffff;
+            color: #2d3748;
+        }
+    
+        /* Toggle button styles */
+        #toggleButton {
+            cursor: pointer;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            transition: background-color 0.3s, color 0.3s;
+            display: flex;
+            align-items: center;
+        }
+    
+        #toggleButton.dark-mode {
+            background-color: #4a5568;
+            color: #ffffff;
+        }
+    
+        #toggleButton.light-mode {
+            background-color: #cbd5e0;
+            color: #2d3748;
+        }
+    
+        #toggleButton .icon {
+            margin-right: 8px;
+        }
+    
+        body.dark-theme .dark-mode-container {
+            background-color: #2d3748;
+            color: #fff;
+        }
+    
+        body.light-theme .light-mode-container {
+            background-color: #3362fc;
+            color: #000000;
+        }
+    
+        .settings-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+    
+        .settings-modal label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .settings-modal select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .settings-modal button {
+            padding: 10px;
+            background-color: #4a5568;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+    
+        @media (max-width: 768px) {
+            /* Mobile styles go here */
+            .settings-modal {
+                width: 80%;
+            }
+        }
+    
+
+
+
+    </style>
+    
+    
+</head>
+<body class="font-sans dark-theme">
+
+    <!-- Main Content Section -->
+    <main class="container mx-auto mt-8 p-4">
+        <div id="filesContainerDiv" class="max-w-lg mx-auto dark-mode-container p-8 rounded shadow-md">
+            
+            <!-- Theme Toggle Button and Refresh Interval Selector -->
+            <div class="flex justify-between mb-4">
+                <div class="flex items-center">
+                    <button id="settingsButton" onclick="toggleSettings()" class="text-sm px-4 py-2 rounded focus:outline-none dark-mode">
+                        <i class="fas fa-cog"></i>
+                        Settings
+                    </button>
+                </div>
+            </div>
+
+            <!-- Shared Files Section -->
+            <div class="mt-8" id="fileFrameContainer">
+                <!-- FileFrame template (hidden) -->
+                <template id="fileFrameTemplate">
+                </template>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div class="settings-container" id="settingsContainer">
+            <div class="settings-modal">
+                <label for="themeSelect">Theme:</label>
+                <select id="themeSelect" class="text-black mb-4">
+                    <option value="dark">Dark</option>
+                    <option value="light">Light</option>
+                </select>
+
+                <label for="refreshSetting">Refresh Interval:</label>
+                <select id="refreshSetting" class="text-black mb-4">
+                    <option value="1">1 second</option>
+                    <option value="5" selected>5 seconds</option>
+                    <option value="10">10 seconds</option>
+                    <!-- Add more options as needed -->
+                </select>
+
+                <button onclick="applySettings()" class="text-sm px-4 py-2 rounded focus:outline-none dark-mode">
+                    Done
+                </button>
+            </div>
+        </div>
+
+        <div id="batteryLevel"></div>
+
+        
+        
+        <!-- JavaScript for theme toggle and settings -->
+        <script>
+            var refreshIntervalRate = 1 * 1000; // Default refresh rate 5
+            var refreshInterval; // Variable to store the interval ID
+
+            function toggleSettings() {
+                const filesContainerDiv = document.getElementById('fileFrameContainer');
+
+
+                const settingsContainer = document.getElementById('settingsContainer');
+                settingsContainer.style.display = settingsContainer.style.display === 'flex' ? 'none' : 'flex';
+
+                // Set initial values in the settings modal
+                const themeSelect = document.getElementById('themeSelect');
+                themeSelect.value = document.body.classList.contains('dark-theme') ? 'dark' : 'light';
+            }
+
+            function applySettings() {
+                const themeSelect = document.getElementById('themeSelect');
+                const selectedTheme = themeSelect.value;
+
+                // Apply theme
+                document.body.classList.remove('dark-theme', 'light-theme');
+                document.body.classList.add(`${selectedTheme}-theme`);
+                document.getElementById('filesContainerDiv').classList.remove('dark-mode-container', 'light-mode-container');
+                // .light-mode-container
+                document.getElementById('filesContainerDiv').classList.add(`${selectedTheme}-mode-container`);
+
+                // Get the selected refresh interval from the dropdown
+                const refreshSetting = document.getElementById('refreshSetting');
+                refreshIntervalRate = parseInt(refreshSetting.value) * 1000; // Convert seconds to milliseconds
+
+                // Clear the existing interval (if any) before starting a new one
+                clearInterval(refreshInterval);
+
+                // Start checking for updates with the new interval
+                checkForUpdates();
+                
+                // Hide settings modal
+                const settingsContainer = document.getElementById('settingsContainer');
+                settingsContainer.style.display = 'none';
+            }
+
+            var previousChecksum = ""; // Declare previousChecksum variable in the global scope
+
+            // Fetch data from the API
+            async function fetchData(url) {
+                try {
+                    const response = await fetch(url + "?checksum=" + previousChecksum);
+
+                    if (!response.ok) {
+                        return null
+                    }
+
+                    const data = await response.json();
+
+                    if (!data) {
+                        return null
+                    }
+
+                    return data;
+                } catch (error) {
+
+                    return null;
+                }
+            }
+
+            // Convert bytes to human-readable file size
+            function formatFileSize(bytes) {
+                const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+                if (bytes === 0) return '0 Byte';
+                const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+                return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+            }
+
+            // Update HTML with new shared files
+            function updateHTML(data) {
+                // Get the container element from the HTML
+                const container = document.getElementById('fileFrameContainer');
+
+                // Clear existing content in the container
+                container.innerHTML = '';
+
+                // Iterate through the data and create elements
+                data.Files.forEach(resource => {
+                    // Create a new list item
+                    const listItem = document.createElement('li');
+                    listItem.classList.add('hover:bg-gray-800', 'hover:text-yellow-500', 'p-4', 'flex', 'items-center', 'justify-between', 'py-2', 'border-b', 'border-gray-300');
+
+                    // Create a hyperlink for the file
+                    const fileLink = document.createElement('a');
+                    fileLink.href = `/download?filename=${encodeURIComponent(resource.FileName)}`;
+                    fileLink.target = '_blank'; // Open in a new tab/window
+                    fileLink.textContent = resource.FileName;
+
+                    // Create a div for file details
+                    const fileDetails = document.createElement('div');
+                    fileDetails.innerHTML = `
+                            <p class="text-sm font-semibold">${fileLink.outerHTML}</p>
+                            <p class="text-xs text-white">Size: ${formatFileSize(resource.FileSize)}</p>
+                        `;
+
+                    // Append file details to the list item
+                    listItem.appendChild(fileDetails);
+
+                    // Create a div for the status icon
+                    const statusIcon = document.createElement('div');
+                    statusIcon.classList.add('flex', 'items-center');
+
+                    // Set the status icon based on FileStatus
+                    if (resource.FileStatus) {
+                        statusIcon.innerHTML = '<i class="fas fa-globe text-green-500"></i>';
+                    } else {
+                        statusIcon.innerHTML = '<i class="fas fa-lock text-red-500"></i>';
+                    }
+
+                    // Append the status icon to the list item
+                    listItem.appendChild(statusIcon);
+
+                    // Append the list item to the container
+                    container.appendChild(listItem);
+                });
+
+                // update checksum
+                previousChecksum = data.Checksum
+
+            }
+
+            /////////////////////////////////
+            // Update HTML with not file found
+            function updateNoFilesFoundHTML(data) {
+                // Get the container element from the HTML
+                const container = document.getElementById('fileFrameContainer');
+
+                // Clear existing content in the container
+                container.innerHTML = '';
+
+                    // Create a new list item
+                    const listItem = document.createElement('center');
+                    listItem.classList.add( 'p-4', 'items-center', 'justify-between', 'py-2', 'border-b', 'border-gray-300');
+
+                    // Create a hyperlink for the file
+                    const fileLink = document.createElement('span');
+                    fileLink.target = '_blank'; // Open in a new tab/window
+                    fileLink.textContent = "not a single file shared yet!";
+
+                    // Append file details to the list item
+                    listItem.appendChild(fileLink);
+
+                    // Append the list item to the container
+                    container.appendChild(listItem);
+
+                // update checksum
+                previousChecksum = data.Checksum
+
+            }
+
+            /////////////////////////////////
+
+            function checkForUpdates() {
+                // Set the new interval
+                refreshInterval = setInterval(async () => {
+                    const newData = await fetchData('/api/active.json');
+
+                    if (newData && newData.Checksum !== previousChecksum) {
+                        if (newData.Files==null) {
+                            updateNoFilesFoundHTML(newData);
+                            return
+                        }
+                        // Data has changed, update HTML
+                        updateHTML(newData);
+                    }
+                }, refreshIntervalRate);
+            }
+
+            // Call the function to check for updates when the page loads
+            window.addEventListener('load', async () => {
+                const initialData = await fetchData('/api/active.json');
+                if (initialData && initialData.Files!=null && initialData.Checksum !== previousChecksum) {
+                    if (initialData.Files==null) {
+                            updateNoFilesFoundHTML(newData);
+                            return
+                    }
+                    // Update HTML with initial data
+                    updateHTML(initialData);
+                    
+                }
+
+
+                // Start checking for updates
+                checkForUpdates();
+            });
+
+        </script>
+    </main>
+
+</body>
+</html>

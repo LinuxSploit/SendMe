@@ -7,7 +7,7 @@
 *.dll
 *.so
 *.dylib
-
+*.apk
 # Test binary, built with `go test -c`
 *.test
 
@@ -17,11 +17,6 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 _
-internal/
-template/
-explorer-ui/
-server/
-ui/
 
 # Go workspace file
 go.work

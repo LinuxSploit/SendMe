@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Request</title>
+    <style>
+        body {
+            background-color: #262626; /* Dark background color */
+            color: #fff; /* Text color */
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 2rem;
+        }
+
+        p {
+            font-size: 1.2rem;
+        }
+
+        button {
+            background-color: #007BFF; /* Blue button color */
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Request Access to Digital Assets</h1>
+        <p>Please click the button below to request access to our digital assets.</p>
+        <a href="/request?asset={{.}}" onclick="window.location.href='/'">
+            <button>Request Access</button>
+        </a>
+    </div>
+
+    <script>
+        function requestAccess() {
+            alert("Access request sent!"); // You can replace this with actual logic to send a request.
+        }
+    </script>
+</body>
+</html>

@@ -4,7 +4,6 @@
 package main
 
 import (
-	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	xtheme "fyne.io/x/fyne/theme"
 	"github.com/LinuxSploit/SendMe/bundled"
@@ -24,7 +23,7 @@ func main() {
 
 	}
 	w := a.NewWindow("SendMe")
-	w.Resize(fyne.NewSize(300, 550))
+	//w.Resize(fyne.NewSize(300, 550))
 	// init app ui
 	ui.Init(w)
 	// create a custom AppTabs widget object
